@@ -1,0 +1,123 @@
+{
+  "run_id": "auth-validation-001-auth_security_v1",
+  "task": {
+    "task_id": "auth-validation-001",
+    "title": "Harden OAuth callback redirect validation",
+    "description": "Tighten redirect target validation in the OAuth callback flow, keep the patch narrow, and preserve the existing login behavior.",
+    "change_class": "auth_security",
+    "risk_level": "high",
+    "target_files": [
+      "src/auth/callback.ts",
+      "tests/auth/callback.test.ts"
+    ],
+    "requires_human_witness": true
+  },
+  "policy_ref": "auth_security_v1",
+  "proposals": [
+    {
+      "proposal_id": "proposal-a",
+      "proposer_role": "architecture",
+      "title": "Narrow allowlist validation",
+      "summary": "Add an explicit allowlist check for redirect targets and keep the handler shape unchanged.",
+      "final_writer_candidate": "agent:architecture",
+      "policy_compliance_score": 0.88,
+      "change_scope_score": 0.84,
+      "test_impact_score": 0.8,
+      "estimated_change_breadth": 2,
+      "predicted_files": [
+        "src/auth/callback.ts",
+        "tests/auth/callback.test.ts"
+      ]
+    },
+    {
+      "proposal_id": "proposal-b",
+      "proposer_role": "security",
+      "title": "Allowlist plus parser hardening",
+      "summary": "Add strict allowlist validation, normalize callback inputs before validation, and extend tests for invalid redirect and malformed callback cases.",
+      "final_writer_candidate": "agent:security",
+      "policy_compliance_score": 0.95,
+      "change_scope_score": 0.86,
+      "test_impact_score": 0.92,
+      "estimated_change_breadth": 2,
+      "predicted_files": [
+        "src/auth/callback.ts",
+        "tests/auth/callback.test.ts"
+      ]
+    },
+    {
+      "proposal_id": "proposal-c",
+      "proposer_role": "pragmatic",
+      "title": "Broad auth callback refactor",
+      "summary": "Refactor the callback subsystem, replace the redirect handling path, and restructure the auth helper modules in one pass.",
+      "final_writer_candidate": "agent:pragmatic",
+      "policy_compliance_score": 0.72,
+      "change_scope_score": 0.55,
+      "test_impact_score": 0.6,
+      "estimated_change_breadth": 5,
+      "predicted_files": [
+        "src/auth/callback.ts",
+        "src/auth/redirect.ts",
+        "src/auth/session.ts",
+        "tests/auth/callback.test.ts",
+        "tests/auth/redirect.test.ts"
+      ]
+    }
+  ],
+  "critiques": [
+    {
+      "critique_id": "critique-a-1",
+      "proposal_id": "proposal-a",
+      "reviewer_role": "security",
+      "verdict": "concern",
+      "blocking": false,
+      "reason_code": "MISSING_INPUT_NORMALIZATION",
+      "summary": "The allowlist helps, but it does not normalize malformed callback inputs before the comparison."
+    },
+    {
+      "critique_id": "critique-b-1",
+      "proposal_id": "proposal-b",
+      "reviewer_role": "architecture-review",
+      "verdict": "support",
+      "blocking": false,
+      "reason_code": "NONE",
+      "summary": "This keeps the patch narrow while tightening validation and adding test coverage."
+    },
+    {
+      "critique_id": "critique-c-1",
+      "proposal_id": "proposal-c",
+      "reviewer_role": "architecture-review",
+      "verdict": "block",
+      "blocking": true,
+      "reason_code": "SCOPE_TOO_BROAD",
+      "summary": "The refactor is broader than the task and increases regression risk for a high-trust change."
+    }
+  ],
+  "adjudication_ref": "adjudication.json",
+  "artifacts": [
+    {
+      "path": "adjudication.json",
+      "sha256": "6b13ab39fcd3e483f7875e5355f7c5abfd800ecd4b08ba18f91ff87a3bbfbd2b"
+    },
+    {
+      "path": "patch_attestation.json",
+      "sha256": null
+    },
+    {
+      "path": "final_patch.diff",
+      "sha256": "bed3030da9efc150a9d93b1f85a95084fa6884d768ef9d0413ea7644f1fa0775"
+    },
+    {
+      "path": "worktree",
+      "sha256": null
+    },
+    {
+      "path": "review_summary.md",
+      "sha256": "5d4a62b8dd2ebe0704ec367d7ede997738c9f8aa9f41f25b2f1281d3e8b4c305"
+    },
+    {
+      "path": "replay_record.json",
+      "sha256": null
+    }
+  ],
+  "final_writer": "agent:security"
+}

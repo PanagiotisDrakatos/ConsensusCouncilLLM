@@ -1,0 +1,20 @@
+{
+  "run_id": "auth-validation-001-auth_security_v1",
+  "winning_proposal_id": "proposal-b",
+  "final_writer": "agent:security",
+  "ranking": [
+    "proposal-b",
+    "proposal-a"
+  ],
+  "rejected_proposals": [
+    {
+      "proposal_id": "proposal-c",
+      "reason": "SCOPE_TOO_BROAD"
+    }
+  ],
+  "decision_basis": [
+    "Applied policy threshold 0.80 and blocked any proposal with a blocking critique.",
+    "Ranked surviving proposals by policy_compliance_score, change_scope_score, test_impact_score, lower estimated_change_breadth, then proposal_id.",
+    "Selected proposal-b with final writer agent:security."
+  ]
+}

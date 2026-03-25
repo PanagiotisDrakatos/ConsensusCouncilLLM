@@ -1,0 +1,53 @@
+[
+  {
+    "proposal_id": "proposal-a",
+    "proposer_role": "application",
+    "title": "Version bump only",
+    "summary": "Bump axios in package.json and rely on the package manager to refresh the lockfile later.",
+    "final_writer_candidate": "agent:application",
+    "policy_compliance_score": 0.82,
+    "change_scope_score": 0.83,
+    "test_impact_score": 0.70,
+    "estimated_change_breadth": 2,
+    "predicted_files": [
+      "package.json",
+      "package-lock.json",
+      "tests/api-client.test.ts"
+    ]
+  },
+  {
+    "proposal_id": "proposal-b",
+    "proposer_role": "release",
+    "title": "Patch upgrade with lockfile and smoke-test sync",
+    "summary": "Bump axios to the approved patch release, keep the lockfile synchronized, and update the client smoke test to assert the patched version.",
+    "final_writer_candidate": "agent:release",
+    "policy_compliance_score": 0.93,
+    "change_scope_score": 0.88,
+    "test_impact_score": 0.89,
+    "estimated_change_breadth": 3,
+    "predicted_files": [
+      "package.json",
+      "package-lock.json",
+      "tests/api-client.test.ts"
+    ]
+  },
+  {
+    "proposal_id": "proposal-c",
+    "proposer_role": "pragmatic",
+    "title": "Refresh all API client dependencies",
+    "summary": "Upgrade axios, refresh related transitive dependencies, and refactor the API client setup while touching nearby tooling files.",
+    "final_writer_candidate": "agent:pragmatic",
+    "policy_compliance_score": 0.74,
+    "change_scope_score": 0.58,
+    "test_impact_score": 0.67,
+    "estimated_change_breadth": 6,
+    "predicted_files": [
+      "package.json",
+      "package-lock.json",
+      "src/api-client.ts",
+      "tests/api-client.test.ts",
+      "eslint.config.js",
+      "README.md"
+    ]
+  }
+]

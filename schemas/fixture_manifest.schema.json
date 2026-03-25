@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://consensuscouncilllm.local/schemas/fixture_manifest.schema.json",
+  "title": "ConsensusCouncilLLM Fixture Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "fixture_id",
+    "proposals",
+    "critiques",
+    "baseline_repo",
+    "patch_overlay_dir",
+    "patch_diff_template"
+  ],
+  "properties": {
+    "fixture_id": { "type": "string" },
+    "proposals": { "type": "string" },
+    "critiques": { "type": "string" },
+    "checks": { "type": ["string", "null"] },
+    "baseline_repo": { "type": "string" },
+    "patch_overlay_dir": { "type": "string" },
+    "patch_diff_template": { "type": "string" }
+  }
+}

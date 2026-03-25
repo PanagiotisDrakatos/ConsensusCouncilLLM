@@ -1,0 +1,12 @@
+{
+  "task_id": "auth-validation-001",
+  "title": "Harden OAuth callback redirect validation",
+  "description": "Tighten redirect target validation in the OAuth callback flow, keep the patch narrow, and preserve the existing login behavior.",
+  "change_class": "auth_security",
+  "risk_level": "high",
+  "target_files": [
+    "src/auth/callback.ts",
+    "tests/auth/callback.test.ts"
+  ],
+  "requires_human_witness": true
+}

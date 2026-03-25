@@ -1,0 +1,18 @@
+{
+  "required": [
+    {
+      "name": "tests",
+      "status": "pass"
+    },
+    {
+      "name": "dependency_audit",
+      "status": "pass"
+    }
+  ],
+  "optional": [
+    {
+      "name": "changelog_review",
+      "status": "pass"
+    }
+  ]
+}

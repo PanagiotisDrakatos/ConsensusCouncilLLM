@@ -1,0 +1,37 @@
+{
+  "run_id": "security-regression-prevented-001-auth_security_v1",
+  "inputs": {
+    "task": "fixtures/security_regression_prevented/task.json",
+    "policy": "fixtures/security_regression_prevented/policy.json",
+    "proposals": "fixtures/security_regression_prevented/proposals.json",
+    "critiques": "fixtures/security_regression_prevented/critiques.json",
+    "checks": "fixtures/security_regression_prevented/checks.json"
+  },
+  "generated_artifacts": [
+    {
+      "path": "evidence_graph.json",
+      "sha256": null
+    },
+    {
+      "path": "adjudication.json",
+      "sha256": "4e4c9f6dff5d8b4f82c367717b918b4f1de30d98cefcf7f3ac386e411b0c3d5a"
+    },
+    {
+      "path": "patch_attestation.json",
+      "sha256": null
+    },
+    {
+      "path": "final_patch.diff",
+      "sha256": "461f263233800cc0210090ca26b8512c65252d5a06287d3515319151327769d6"
+    },
+    {
+      "path": "worktree",
+      "sha256": null
+    },
+    {
+      "path": "review_summary.md",
+      "sha256": "4ac0bd69df9d35d6302f43f44c45af75592cce154f9ba9c739238dc605b185e0"
+    }
+  ],
+  "verification_target": "council verify --run demo/security_regression_prevented_run"
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "proposal_id": "proposal-a",
+    "proposer_role": "architecture",
+    "title": "Narrow allowlist validation",
+    "summary": "Add an explicit allowlist check for redirect targets and keep the handler shape unchanged.",
+    "final_writer_candidate": "agent:architecture",
+    "policy_compliance_score": 0.88,
+    "change_scope_score": 0.84,
+    "test_impact_score": 0.80,
+    "estimated_change_breadth": 2,
+    "predicted_files": [
+      "src/auth/callback.ts",
+      "tests/auth/callback.test.ts"
+    ]
+  },
+  {
+    "proposal_id": "proposal-b",
+    "proposer_role": "security",
+    "title": "Allowlist plus parser hardening",
+    "summary": "Add strict allowlist validation, normalize callback inputs before validation, and extend tests for invalid redirect and malformed callback cases.",
+    "final_writer_candidate": "agent:security",
+    "policy_compliance_score": 0.95,
+    "change_scope_score": 0.86,
+    "test_impact_score": 0.92,
+    "estimated_change_breadth": 2,
+    "predicted_files": [
+      "src/auth/callback.ts",
+      "tests/auth/callback.test.ts"
+    ]
+  },
+  {
+    "proposal_id": "proposal-c",
+    "proposer_role": "pragmatic",
+    "title": "Broad auth callback refactor",
+    "summary": "Refactor the callback subsystem, replace the redirect handling path, and restructure the auth helper modules in one pass.",
+    "final_writer_candidate": "agent:pragmatic",
+    "policy_compliance_score": 0.72,
+    "change_scope_score": 0.55,
+    "test_impact_score": 0.60,
+    "estimated_change_breadth": 5,
+    "predicted_files": [
+      "src/auth/callback.ts",
+      "src/auth/redirect.ts",
+      "src/auth/session.ts",
+      "tests/auth/callback.test.ts",
+      "tests/auth/redirect.test.ts"
+    ]
+  }
+]

@@ -1,0 +1,46 @@
+{
+  "policy_id": "dependency_upgrade_v1",
+  "change_class": "dependency_upgrade",
+  "risk_level": "medium",
+  "admission": {
+    "consensus_required": true,
+    "consensus_mode": "audit",
+    "allow_direct_execution": false,
+    "require_final_writer": true
+  },
+  "review": {
+    "minimum_reviewers": 2,
+    "reviewer_roles": ["release", "application"],
+    "human_approval_required": false
+  },
+  "required_artifacts": [
+    "evidence_graph.json",
+    "adjudication.json",
+    "patch_attestation.json",
+    "review_summary.md",
+    "replay_record.json",
+    "final_patch.diff",
+    "worktree"
+  ],
+  "checks": {
+    "required": ["tests", "dependency_audit"],
+    "optional": ["changelog_review"]
+  },
+  "merge_gate": {
+    "allow_merge_if": [
+      "required_checks_pass",
+      "lockfile_in_sync",
+      "attestation_manifest_present"
+    ],
+    "block_merge_if": [
+      "dependency_audit_fails",
+      "scope_expands_beyond_patch_upgrade"
+    ]
+  },
+  "attestation": {
+    "level": "full",
+    "export_formats": ["json", "markdown"],
+    "human_witness_required": false
+  },
+  "policy_compliance_threshold": 0.8
+}

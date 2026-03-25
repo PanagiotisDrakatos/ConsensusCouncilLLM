@@ -1,0 +1,18 @@
+{
+  "required": [
+    {
+      "name": "tests",
+      "status": "passed"
+    },
+    {
+      "name": "lint",
+      "status": "passed"
+    }
+  ],
+  "optional": [
+    {
+      "name": "static_security_scan",
+      "status": "not_run"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+[
+  {
+    "critique_id": "critique-a-1",
+    "proposal_id": "proposal-a",
+    "reviewer_role": "security",
+    "verdict": "concern",
+    "blocking": false,
+    "reason_code": "MISSING_INPUT_NORMALIZATION",
+    "summary": "The allowlist helps, but it does not normalize malformed callback inputs before the comparison."
+  },
+  {
+    "critique_id": "critique-b-1",
+    "proposal_id": "proposal-b",
+    "reviewer_role": "architecture-review",
+    "verdict": "support",
+    "blocking": false,
+    "reason_code": "NONE",
+    "summary": "This keeps the patch narrow while tightening validation and adding test coverage."
+  },
+  {
+    "critique_id": "critique-c-1",
+    "proposal_id": "proposal-c",
+    "reviewer_role": "architecture-review",
+    "verdict": "block",
+    "blocking": true,
+    "reason_code": "SCOPE_TOO_BROAD",
+    "summary": "The refactor is broader than the task and increases regression risk for a high-trust change."
+  }
+]

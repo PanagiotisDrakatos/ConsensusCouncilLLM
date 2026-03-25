@@ -1,0 +1,13 @@
+{
+  "task_id": "dependency-upgrade-001",
+  "title": "Apply a narrow axios patch upgrade with lockfile sync",
+  "description": "Upgrade axios to the approved patch release, keep the change narrow, and update only the package metadata and targeted client test coverage.",
+  "change_class": "dependency_upgrade",
+  "risk_level": "medium",
+  "target_files": [
+    "package.json",
+    "package-lock.json",
+    "tests/api-client.test.ts"
+  ],
+  "requires_human_witness": false
+}

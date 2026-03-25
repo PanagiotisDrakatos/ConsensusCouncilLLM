@@ -1,0 +1,81 @@
+{
+  "subject": {
+    "task_id": "security-regression-prevented-001",
+    "title": "Prevent removal of redirect validation during auth callback refactor",
+    "repository": "worktree",
+    "intended_files": [
+      "src/auth/callback.ts",
+      "tests/auth/callback.test.ts"
+    ]
+  },
+  "builder": {
+    "tool": "council",
+    "version": "0.1.0"
+  },
+  "predicate_type": "https://consensuscouncilllm.local/attestation/patch-adjudication/v1",
+  "predicate": {
+    "winning_proposal_id": "proposal-b",
+    "final_writer": "agent:security",
+    "review_mode": "audit",
+    "change_class": "auth_security",
+    "risk_level": "high"
+  },
+  "policy": {
+    "policy_id": "auth_security_v1",
+    "change_class": "auth_security",
+    "risk_level": "high"
+  },
+  "checks": {
+    "required": [
+      {
+        "name": "tests",
+        "status": "pass"
+      },
+      {
+        "name": "lint",
+        "status": "pass"
+      },
+      {
+        "name": "security_policy",
+        "status": "pass"
+      }
+    ],
+    "optional": [
+      {
+        "name": "static_security_scan",
+        "status": "pass"
+      }
+    ]
+  },
+  "evidence_refs": [
+    {
+      "path": "evidence_graph.json",
+      "sha256": null
+    },
+    {
+      "path": "adjudication.json",
+      "sha256": "4e4c9f6dff5d8b4f82c367717b918b4f1de30d98cefcf7f3ac386e411b0c3d5a"
+    },
+    {
+      "path": "final_patch.diff",
+      "sha256": "461f263233800cc0210090ca26b8512c65252d5a06287d3515319151327769d6"
+    },
+    {
+      "path": "worktree",
+      "sha256": null
+    },
+    {
+      "path": "review_summary.md",
+      "sha256": "4ac0bd69df9d35d6302f43f44c45af75592cce154f9ba9c739238dc605b185e0"
+    },
+    {
+      "path": "replay_record.json",
+      "sha256": null
+    }
+  ],
+  "human_witness": {
+    "required": true,
+    "status": "pending-human-approval"
+  },
+  "verification_status": "prototype-unverified-until-council-verify"
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "critique_id": "critique-a-1",
+    "proposal_id": "proposal-a",
+    "reviewer_role": "security-review",
+    "verdict": "block",
+    "blocking": true,
+    "reason_code": "INPUT_VALIDATION_REMOVED",
+    "summary": "This change removes redirect input validation from an auth-sensitive path and would allow unsafe callback targets to reach merge review."
+  },
+  {
+    "critique_id": "critique-b-1",
+    "proposal_id": "proposal-b",
+    "reviewer_role": "architecture-review",
+    "verdict": "support",
+    "blocking": false,
+    "reason_code": "NONE",
+    "summary": "The refactor preserves the validation contract, keeps the patch narrow, and makes the security intent clearer in code."
+  }
+]

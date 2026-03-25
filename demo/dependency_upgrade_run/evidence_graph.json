@@ -1,0 +1,127 @@
+{
+  "run_id": "dependency-upgrade-001-dependency_upgrade_v1",
+  "task": {
+    "task_id": "dependency-upgrade-001",
+    "title": "Apply a narrow axios patch upgrade with lockfile sync",
+    "description": "Upgrade axios to the approved patch release, keep the change narrow, and update only the package metadata and targeted client test coverage.",
+    "change_class": "dependency_upgrade",
+    "risk_level": "medium",
+    "target_files": [
+      "package.json",
+      "package-lock.json",
+      "tests/api-client.test.ts"
+    ],
+    "requires_human_witness": false
+  },
+  "policy_ref": "dependency_upgrade_v1",
+  "proposals": [
+    {
+      "proposal_id": "proposal-a",
+      "proposer_role": "application",
+      "title": "Version bump only",
+      "summary": "Bump axios in package.json and rely on the package manager to refresh the lockfile later.",
+      "final_writer_candidate": "agent:application",
+      "policy_compliance_score": 0.82,
+      "change_scope_score": 0.83,
+      "test_impact_score": 0.7,
+      "estimated_change_breadth": 2,
+      "predicted_files": [
+        "package.json",
+        "package-lock.json",
+        "tests/api-client.test.ts"
+      ]
+    },
+    {
+      "proposal_id": "proposal-b",
+      "proposer_role": "release",
+      "title": "Patch upgrade with lockfile and smoke-test sync",
+      "summary": "Bump axios to the approved patch release, keep the lockfile synchronized, and update the client smoke test to assert the patched version.",
+      "final_writer_candidate": "agent:release",
+      "policy_compliance_score": 0.93,
+      "change_scope_score": 0.88,
+      "test_impact_score": 0.89,
+      "estimated_change_breadth": 3,
+      "predicted_files": [
+        "package.json",
+        "package-lock.json",
+        "tests/api-client.test.ts"
+      ]
+    },
+    {
+      "proposal_id": "proposal-c",
+      "proposer_role": "pragmatic",
+      "title": "Refresh all API client dependencies",
+      "summary": "Upgrade axios, refresh related transitive dependencies, and refactor the API client setup while touching nearby tooling files.",
+      "final_writer_candidate": "agent:pragmatic",
+      "policy_compliance_score": 0.74,
+      "change_scope_score": 0.58,
+      "test_impact_score": 0.67,
+      "estimated_change_breadth": 6,
+      "predicted_files": [
+        "package.json",
+        "package-lock.json",
+        "src/api-client.ts",
+        "tests/api-client.test.ts",
+        "eslint.config.js",
+        "README.md"
+      ]
+    }
+  ],
+  "critiques": [
+    {
+      "critique_id": "critique-a-1",
+      "proposal_id": "proposal-a",
+      "reviewer_role": "release-review",
+      "verdict": "concern",
+      "blocking": false,
+      "reason_code": "LOCKFILE_NOT_EXPLICIT",
+      "summary": "The package bump is narrow, but it leaves the lockfile refresh implicit instead of exporting the full dependency evidence path."
+    },
+    {
+      "critique_id": "critique-b-1",
+      "proposal_id": "proposal-b",
+      "reviewer_role": "application-review",
+      "verdict": "support",
+      "blocking": false,
+      "reason_code": "NONE",
+      "summary": "This keeps the change narrow while preserving lockfile evidence and test coverage for the approved patch release."
+    },
+    {
+      "critique_id": "critique-c-1",
+      "proposal_id": "proposal-c",
+      "reviewer_role": "release-review",
+      "verdict": "block",
+      "blocking": true,
+      "reason_code": "SCOPE_TOO_BROAD",
+      "summary": "A broad dependency refresh expands beyond the approved patch-upgrade task and raises reviewer burden."
+    }
+  ],
+  "adjudication_ref": "adjudication.json",
+  "artifacts": [
+    {
+      "path": "adjudication.json",
+      "sha256": "ba832515e68a22d90f613e682b4ab669b3001287058f2b6b307f1eaea2d5b161"
+    },
+    {
+      "path": "patch_attestation.json",
+      "sha256": null
+    },
+    {
+      "path": "final_patch.diff",
+      "sha256": "15fde7ae743ccc90949a9d4c1f59a0862cb9d0a36d2abae478d9d8b6ffdae467"
+    },
+    {
+      "path": "worktree",
+      "sha256": null
+    },
+    {
+      "path": "review_summary.md",
+      "sha256": "cd448b724db4dff09738f86c585377f9f9173599470d2f0103076b6adc9e0eb0"
+    },
+    {
+      "path": "replay_record.json",
+      "sha256": null
+    }
+  ],
+  "final_writer": "agent:release"
+}

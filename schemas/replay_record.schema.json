@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://consensuscouncilllm.local/schemas/replay_record.schema.json",
+  "title": "ConsensusCouncilLLM Replay Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "inputs",
+    "generated_artifacts",
+    "verification_target"
+  ],
+  "properties": {
+    "run_id": { "type": "string" },
+    "verification_target": { "type": "string" },
+    "inputs": {
+      "type": "object",
+      "required": ["task", "policy", "proposals", "critiques"],
+      "properties": {
+        "task": { "type": "string" },
+        "policy": { "type": "string" },
+        "proposals": { "type": "string" },
+        "critiques": { "type": "string" },
+        "checks": { "type": ["string", "null"] }
+      }
+    },
+    "generated_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string" },
+          "sha256": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}

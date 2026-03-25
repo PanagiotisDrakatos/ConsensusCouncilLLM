@@ -1,0 +1,9 @@
+{
+  "fixture_id": "security_regression_prevented",
+  "proposals": "proposals.json",
+  "critiques": "critiques.json",
+  "checks": "checks.json",
+  "baseline_repo": "repo",
+  "patch_overlay_dir": "patches/{proposal_id}",
+  "patch_diff_template": "patches/{proposal_id}.patch"
+}

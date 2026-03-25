@@ -1,0 +1,29 @@
+[
+  {
+    "critique_id": "critique-a-1",
+    "proposal_id": "proposal-a",
+    "reviewer_role": "release-review",
+    "verdict": "concern",
+    "blocking": false,
+    "reason_code": "LOCKFILE_NOT_EXPLICIT",
+    "summary": "The package bump is narrow, but it leaves the lockfile refresh implicit instead of exporting the full dependency evidence path."
+  },
+  {
+    "critique_id": "critique-b-1",
+    "proposal_id": "proposal-b",
+    "reviewer_role": "application-review",
+    "verdict": "support",
+    "blocking": false,
+    "reason_code": "NONE",
+    "summary": "This keeps the change narrow while preserving lockfile evidence and test coverage for the approved patch release."
+  },
+  {
+    "critique_id": "critique-c-1",
+    "proposal_id": "proposal-c",
+    "reviewer_role": "release-review",
+    "verdict": "block",
+    "blocking": true,
+    "reason_code": "SCOPE_TOO_BROAD",
+    "summary": "A broad dependency refresh expands beyond the approved patch-upgrade task and raises reviewer burden."
+  }
+]

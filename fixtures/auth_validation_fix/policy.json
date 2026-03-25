@@ -1,0 +1,46 @@
+{
+  "policy_id": "auth_security_v1",
+  "change_class": "auth_security",
+  "risk_level": "high",
+  "admission": {
+    "consensus_required": true,
+    "consensus_mode": "audit",
+    "allow_direct_execution": false,
+    "require_final_writer": true
+  },
+  "review": {
+    "minimum_reviewers": 2,
+    "reviewer_roles": ["architecture", "security"],
+    "human_approval_required": true
+  },
+  "required_artifacts": [
+    "evidence_graph.json",
+    "adjudication.json",
+    "patch_attestation.json",
+    "review_summary.md",
+    "replay_record.json",
+    "final_patch.diff",
+    "worktree"
+  ],
+  "checks": {
+    "required": ["tests", "lint"],
+    "optional": ["static_security_scan"]
+  },
+  "merge_gate": {
+    "allow_merge_if": [
+      "required_checks_pass",
+      "required_reviewers_approve",
+      "attestation_manifest_present"
+    ],
+    "block_merge_if": [
+      "critical_finding_open",
+      "human_approval_missing"
+    ]
+  },
+  "attestation": {
+    "level": "full",
+    "export_formats": ["json", "markdown"],
+    "human_witness_required": true
+  },
+  "policy_compliance_threshold": 0.8
+}

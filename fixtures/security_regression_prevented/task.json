@@ -1,0 +1,12 @@
+{
+  "task_id": "security-regression-prevented-001",
+  "title": "Prevent removal of redirect validation during auth callback refactor",
+  "description": "An AI-generated refactor proposal removes redirect input validation in the OAuth callback path. Preserve the security validation guarantees while allowing a narrow cleanup.",
+  "change_class": "auth_security",
+  "risk_level": "high",
+  "target_files": [
+    "src/auth/callback.ts",
+    "tests/auth/callback.test.ts"
+  ],
+  "requires_human_witness": true
+}

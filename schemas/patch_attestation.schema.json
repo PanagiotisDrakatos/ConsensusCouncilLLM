@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://consensuscouncilllm.local/schemas/patch_attestation.schema.json",
+  "title": "ConsensusCouncilLLM Patch Attestation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "subject",
+    "builder",
+    "predicate_type",
+    "predicate",
+    "policy",
+    "checks",
+    "evidence_refs",
+    "human_witness",
+    "verification_status"
+  ],
+  "properties": {
+    "subject": {
+      "type": "object",
+      "required": ["task_id", "title", "repository", "intended_files"],
+      "properties": {
+        "task_id": { "type": "string" },
+        "title": { "type": "string" },
+        "repository": { "type": "string" },
+        "intended_files": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "builder": {
+      "type": "object",
+      "required": ["tool", "version"],
+      "properties": {
+        "tool": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "predicate_type": { "type": "string" },
+    "predicate": {
+      "type": "object",
+      "required": [
+        "winning_proposal_id",
+        "final_writer",
+        "review_mode",
+        "change_class",
+        "risk_level"
+      ],
+      "properties": {
+        "winning_proposal_id": { "type": "string" },
+        "final_writer": { "type": "string" },
+        "review_mode": { "type": "string" },
+        "change_class": { "type": "string" },
+        "risk_level": { "type": "string" }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": ["policy_id", "change_class", "risk_level"],
+      "properties": {
+        "policy_id": { "type": "string" },
+        "change_class": { "type": "string" },
+        "risk_level": { "type": "string" }
+      }
+    },
+    "checks": {
+      "type": "object",
+      "required": ["required", "optional"],
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "status"],
+            "properties": {
+              "name": { "type": "string" },
+              "status": { "type": "string" }
+            }
+          }
+        },
+        "optional": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "status"],
+            "properties": {
+              "name": { "type": "string" },
+              "status": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string" },
+          "sha256": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "human_witness": {
+      "type": "object",
+      "required": ["required", "status"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "status": { "type": "string" }
+      }
+    },
+    "verification_status": { "type": "string" }
+  }
+}

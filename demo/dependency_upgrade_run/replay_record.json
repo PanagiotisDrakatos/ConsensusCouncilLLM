@@ -1,0 +1,37 @@
+{
+  "run_id": "dependency-upgrade-001-dependency_upgrade_v1",
+  "inputs": {
+    "task": "fixtures/dependency_upgrade/task.json",
+    "policy": "fixtures/dependency_upgrade/policy.json",
+    "proposals": "fixtures/dependency_upgrade/proposals.json",
+    "critiques": "fixtures/dependency_upgrade/critiques.json",
+    "checks": "fixtures/dependency_upgrade/checks.json"
+  },
+  "generated_artifacts": [
+    {
+      "path": "evidence_graph.json",
+      "sha256": null
+    },
+    {
+      "path": "adjudication.json",
+      "sha256": "ba832515e68a22d90f613e682b4ab669b3001287058f2b6b307f1eaea2d5b161"
+    },
+    {
+      "path": "patch_attestation.json",
+      "sha256": null
+    },
+    {
+      "path": "final_patch.diff",
+      "sha256": "15fde7ae743ccc90949a9d4c1f59a0862cb9d0a36d2abae478d9d8b6ffdae467"
+    },
+    {
+      "path": "worktree",
+      "sha256": null
+    },
+    {
+      "path": "review_summary.md",
+      "sha256": "cd448b724db4dff09738f86c585377f9f9173599470d2f0103076b6adc9e0eb0"
+    }
+  ],
+  "verification_target": "council verify --run demo/dependency_upgrade_run"
+}

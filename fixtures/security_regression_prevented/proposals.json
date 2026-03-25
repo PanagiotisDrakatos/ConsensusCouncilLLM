@@ -1,0 +1,32 @@
+[
+  {
+    "proposal_id": "proposal-a",
+    "proposer_role": "pragmatic",
+    "title": "Drop redirect validation for a simpler callback path",
+    "summary": "Remove the redirect validation helper and trust the callback input directly to simplify the auth flow.",
+    "final_writer_candidate": "agent:pragmatic",
+    "policy_compliance_score": 0.42,
+    "change_scope_score": 0.81,
+    "test_impact_score": 0.35,
+    "estimated_change_breadth": 2,
+    "predicted_files": [
+      "src/auth/callback.ts",
+      "tests/auth/callback.test.ts"
+    ]
+  },
+  {
+    "proposal_id": "proposal-b",
+    "proposer_role": "security",
+    "title": "Refactor validation into an explicit guard helper",
+    "summary": "Keep redirect validation intact, extract the allowlist check into a helper, and extend tests so the regression remains visible.",
+    "final_writer_candidate": "agent:security",
+    "policy_compliance_score": 0.96,
+    "change_scope_score": 0.87,
+    "test_impact_score": 0.94,
+    "estimated_change_breadth": 2,
+    "predicted_files": [
+      "src/auth/callback.ts",
+      "tests/auth/callback.test.ts"
+    ]
+  }
+]
