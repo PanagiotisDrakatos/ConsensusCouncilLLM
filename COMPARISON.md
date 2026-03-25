@@ -14,6 +14,19 @@ ConsensusCouncilLLM targets a specific gap: **governance of AI-generated code ch
 | Replay and verification | Yes | Partial | Partial | No | No |
 | Governs AI-generated change | Yes | No | No | No | No |
 | Local-first, file-based | Yes | Partial | No (online) | No (cloud) | Varies |
+| **Governance traceability** | **Full** | Build-only | Signature-only | None | None |
+| **Human oversight integration** | **Yes** | No | No | No | No |
+| **Regulatory alignment (EU AI Act)** | **Yes** | Partial | No | No | No |
+
+## Governance Maturity Comparison
+
+| Dimension | ConsensusCouncilLLM | Nearest alternative |
+|-----------|:---:|:---:|
+| Change-level governance | 9/10 — policy + evidence + adjudication + attestation | 2/10 — SLSA (build provenance only) |
+| Auditability | 9/10 — full replay with verifier | 5/10 — Sigstore (signature logs) |
+| Human-in-the-loop | 8/10 — witness fields + final-writer discipline | 1/10 — none provide structured human review |
+| Tamper detection | 8/10 — digest-linked artifacts + tamper-proof examples | 7/10 — in-toto (layout verification) |
+| Regulatory readiness | 7/10 — maps to AI Act Art. 50-51 | 3/10 — SLSA (build compliance only) |
 
 ## What Each Tool Does Well
 
@@ -42,6 +55,17 @@ Code Generation          Governance Layer         Artifact Signing
 ```
 
 ConsensusCouncilLLM is not a replacement for any of these tools. It fills the gap between code generation and artifact signing — the governance layer that decides whether a specific AI-generated change is safe to merge.
+
+## Key differentiator: Governance traceability
+
+Most existing tools provide **point-in-time verification** (was this signed? was this built reproducibly?). ConsensusCouncilLLM provides **decision-process traceability** (what was proposed, what was considered, how was the decision made, and can the entire process be replayed?).
+
+This distinction matters because:
+- Signatures prove identity, not judgment quality
+- Build provenance proves process, not review adequacy
+- Governance traceability proves that a structured, policy-driven review occurred before merge
+
+For organisations adopting AI coding tools, the question is not "was this code signed?" but "was this AI-generated change reviewed under an appropriate governance process?" ConsensusCouncilLLM answers that question.
 
 ## Research Support
 

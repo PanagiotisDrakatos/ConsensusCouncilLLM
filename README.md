@@ -64,22 +64,53 @@ See [QUICKSTART.md](QUICKSTART.md) and [DEMO_RUNBOOK.md](DEMO_RUNBOOK.md) for de
 
 ## Architecture
 
+### Ecosystem View
+
 ```
-+--------------+     +---------------+     +----------------+
-| Policy Layer |---->| Evidence      |---->| Adjudication   |
-| (risk class) |     | (proposals,   |     | (deterministic |
-|              |     |  critiques)   |     |  ranking)      |
-+--------------+     +---------------+     +--------+-------+
-                                                    |
-                     +---------------+     +--------v-------+
-                     | Replay Layer  |<----| Attestation    |
-                     | (reproduce)   |     | (SLSA-inspired)|
-                     +---------------+     +----------------+
-                                                    |
-                                           +--------v-------+
-                                           | Verification   |
-                                           | (PASS/FAIL)    |
-                                           +----------------+
+Developer Workflow                    ConsensusCouncilLLM                     Merge Decision
++------------------+          +--------------------------------+          +----------------+
+| AI Coding Tool   |          |                                |          |                |
+| (Copilot, Cursor |--diff--->|  Policy    Evidence   Adjud.   |--attest->| Git Merge      |
+|  Claude, etc.)   |          |  Layer     Layer      Layer    |          | (governed)     |
++------------------+          |    |          |          |     |          +----------------+
+                              |    v          v          v     |
+                              |  +------+  +------+  +------+ |
+                              |  |schema|  |graph |  |score | |
+                              |  |valid.|  |links |  |dims. | |
+                              |  +------+  +------+  +------+ |
+                              |              |                 |
+                              |    +---------v---------+       |
+                              |    | Attestation Layer |       |
+                              |    | (SLSA-inspired)   |       |
+                              |    +---------+---------+       |
+                              |              |                 |
+                              |    +---------v---------+       |
+                              |    | Verification      |       |
+                              |    | (PASS / FAIL)     |       |
+                              |    +-------------------+       |
+                              +--------------------------------+
+```
+
+### Protocol Flow
+
+```
+  1. POLICY          2. EVIDENCE         3. ADJUDICATION     4. ATTESTATION
+  +-----------+      +-----------+      +-------------+      +-------------+
+  | Load task |      | Collect   |      | Score on    |      | Export      |
+  | + policy  |----->| proposals |----->| policy_comp |----->| attestation |
+  | file      |      | + crits   |      | scope       |      | + replay    |
+  +-----------+      +-----------+      | test_impact |      | + digest    |
+       |                  |             +------+------+      +------+------+
+       v                  v                    |                    |
+  change_class       evidence_graph      adjudication         5. VERIFY
+  risk_level         (untrusted input)   (1 winner,           +-------------+
+  review_depth                            1 final writer)     | Check:      |
+                                                              | - presence  |
+                                                              | - schema    |
+                                                              | - refs      |
+                                                              | - digests   |
+                                                              +-------------+
+                                                              PASS or FAIL
 ```
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the full layer model.
