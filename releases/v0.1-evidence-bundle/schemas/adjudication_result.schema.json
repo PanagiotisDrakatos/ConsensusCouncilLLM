@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://consensuscouncilllm.local/schemas/adjudication_result.schema.json",
+  "title": "ConsensusCouncilLLM Adjudication Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "winning_proposal_id",
+    "final_writer",
+    "ranking",
+    "rejected_proposals",
+    "decision_basis"
+  ],
+  "properties": {
+    "run_id": { "type": "string" },
+    "winning_proposal_id": { "type": "string" },
+    "final_writer": { "type": "string" },
+    "ranking": { "type": "array", "items": { "type": "string" } },
+    "decision_basis": { "type": "array", "items": { "type": "string" } },
+    "rejected_proposals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["proposal_id", "reason"],
+        "properties": {
+          "proposal_id": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    }
+  }
+}

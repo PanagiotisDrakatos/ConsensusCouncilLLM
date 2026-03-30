@@ -4,7 +4,7 @@
 
 ConsensusCouncilLLM is the policy-governed admission, evidence, and attestation layer for AI-generated code changes.
 
-It should be read as branch protection for AI-generated change.
+It should be read as a narrow trust layer between generated change and merge trust.
 
 ## Comparison Matrix
 

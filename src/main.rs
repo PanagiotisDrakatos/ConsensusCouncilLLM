@@ -1,6 +1,10 @@
 use anyhow::Result;
 
-use council::{cli::{Cli, Commands}, run::execute_run, verify::execute_verify};
+use council::{
+    cli::{Cli, Commands},
+    run::execute_run,
+    verify::execute_verify,
+};
 
 fn main() -> Result<()> {
     let cli = <Cli as clap::Parser>::parse();

@@ -1,57 +1,38 @@
 # Roadmap
 
-## Funded Phase (6 months — NLnet NGI Zero Commons)
+Updated: 2026-03-31
 
-### Milestone 1: Policy + Schema Baseline (Months 1-2)
+ConsensusCouncilLLM keeps the next funded phase narrow and artifact-first.
 
-- Clean up and document the policy schema
-- Create an example policy pack for multiple change-risk classes (auth/security, dependency upgrade, refactoring, new feature)
-- Document all artifact schemas with field-level descriptions
-- Publish schema validation tests
+## 6-month funded direction
 
-### Milestone 2: Adjudication + Attestation Prototype (Months 3-4)
+### Months 1-2
+- clean up the policy schema
+- document artifact schemas
+- ship a small example policy pack for multiple change classes
 
-- Strengthen the adjudication flow with multi-dimensional scoring
-- Add patch-path binding for at least two governed change types
-- Improve attestation export with clearer provenance fields
-- Strengthen verification rules (cross-reference checks, digest validation)
-- Add tamper-detection examples for each fixture type
+### Months 3-4
+- strengthen adjudication rules
+- generalize the governed patch path beyond the initial thin slice
+- improve attestation export and verifier coverage
 
-### Milestone 3: Governed Demo Pack + Verifier + Release (Months 5-6)
+### Months 5-6
+- ship a small multi-fixture governed demo pack
+- publish a replay/eval runbook
+- tighten packaging and release honesty constraints
 
-- Publish a multi-fixture governed demo pack (5+ change classes)
-- Create a replay/eval runbook for external reviewers
-- Harden verifier with comprehensive PASS/FAIL reason codes
-- Release packaging (install docs, quickstart, checksums)
-- Final documentation review and cleanup
+## Boundaries
 
-## Post-Grant Vision (12-month horizon)
+Out of scope for this grant-sized pass:
 
-### v0.2 — Integration Layer
-- Git hook integration (pre-merge governance gate)
-- CI/CD integration contracts (GitHub Actions, GitLab CI)
-- MCP server wrapper for agentic tool consumption
+- hosted service work
+- dashboard work
+- IDE-suite work
+- broad provider integrations
+- orchestration-platform expansion
 
-### v0.3 — Broader Evaluation
-- Comparative eval harness: governed vs ungoverned baselines
-- Community fixture contributions
-- Policy template library for common change patterns
+## Supporting docs
 
-### v1.0 — Commons Release
-- Stable CLI with semantic versioning
-- Published crate on crates.io
-- Comprehensive documentation site
-- Integration guides for major forges (GitHub, GitLab, Gitea)
-
-## Non-Goals (Preserved)
-
-These remain explicitly out of scope:
-- Hosted service or SaaS
-- Web dashboard or IDE plugin
-- General-purpose agent orchestration
-- Autonomous merge authority
-- Provider-specific lock-in
-
-## Guiding Principle
-
-> The next lift comes from verifiability, not from adding more agent magic.
+- `TIMELINE_V1.md`
+- `MILESTONES_AND_EFFORT_V1.md`
+- `BUDGET_V1.md`

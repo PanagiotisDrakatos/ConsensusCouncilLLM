@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://consensuscouncilllm.local/schemas/policy.schema.json",
+  "title": "ConsensusCouncilLLM Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "policy_id",
+    "change_class",
+    "risk_level",
+    "admission",
+    "review",
+    "required_artifacts",
+    "checks",
+    "merge_gate",
+    "attestation"
+  ],
+  "properties": {
+    "policy_id": { "type": "string" },
+    "change_class": { "type": "string" },
+    "risk_level": { "type": "string" },
+    "policy_compliance_threshold": { "type": "number" },
+    "admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "consensus_required",
+        "consensus_mode",
+        "allow_direct_execution",
+        "require_final_writer"
+      ],
+      "properties": {
+        "consensus_required": { "type": "boolean" },
+        "consensus_mode": { "type": "string" },
+        "allow_direct_execution": { "type": "boolean" },
+        "require_final_writer": { "type": "boolean" }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "minimum_reviewers",
+        "reviewer_roles",
+        "human_approval_required"
+      ],
+      "properties": {
+        "minimum_reviewers": { "type": "integer", "minimum": 0 },
+        "reviewer_roles": { "type": "array", "items": { "type": "string" } },
+        "human_approval_required": { "type": "boolean" }
+      }
+    },
+    "required_artifacts": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "optional"],
+      "properties": {
+        "required": { "type": "array", "items": { "type": "string" } },
+        "optional": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "merge_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allow_merge_if", "block_merge_if"],
+      "properties": {
+        "allow_merge_if": { "type": "array", "items": { "type": "string" } },
+        "block_merge_if": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "export_formats", "human_witness_required"],
+      "properties": {
+        "level": { "type": "string" },
+        "export_formats": { "type": "array", "items": { "type": "string" } },
+        "human_witness_required": { "type": "boolean" }
+      }
+    }
+  }
+}

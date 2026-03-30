@@ -9,10 +9,10 @@ use anyhow::{bail, ensure, Context, Result};
 use crate::{
     policy::load_policy,
     schema::{
-        read_json_file, repo_relative_or_absolute, sha256_for_file, validate_struct_against_schema,
+        read_json_file, repo_relative_or_absolute, sha256_for_path, validate_struct_against_schema,
         write_json_file, AdjudicationResult, ArtifactRef, ChecksRecord, Critique, EvidenceGraph,
-        FixtureManifest, PatchAttestation, PolicyRef, Proposal, ReplayInputs, ReplayRecord,
-        RejectedProposal, Task,
+        FixtureManifest, PatchAttestation, PolicyRef, Proposal, RejectedProposal, ReplayInputs,
+        ReplayRecord, Task,
     },
 };
 
@@ -47,12 +47,16 @@ pub fn execute_run(task: &Path, policy_path: &Path, out: &Path) -> Result<()> {
     let fixture_manifest = load_fixture_manifest(&fixture_dir)?;
     let proposals_path = fixture_path(
         &fixture_dir,
-        fixture_manifest.as_ref().map(|manifest| manifest.proposals.as_str()),
+        fixture_manifest
+            .as_ref()
+            .map(|manifest| manifest.proposals.as_str()),
         "proposals.json",
     );
     let critiques_path = fixture_path(
         &fixture_dir,
-        fixture_manifest.as_ref().map(|manifest| manifest.critiques.as_str()),
+        fixture_manifest
+            .as_ref()
+            .map(|manifest| manifest.critiques.as_str()),
         "critiques.json",
     );
     let checks_path = fixture_manifest
@@ -179,7 +183,7 @@ pub fn execute_run(task: &Path, policy_path: &Path, out: &Path) -> Result<()> {
         artifacts: vec![
             artifact_ref(&adjudication_path, true)?,
             artifact_ref(&patch_binding.final_patch_diff, true)?,
-            artifact_ref(&patch_binding.worktree_dir, false)?,
+            artifact_ref(&patch_binding.worktree_dir, true)?,
             artifact_ref(&review_summary_path, true)?,
             artifact_ref(&replay_record_path, false)?,
         ],
@@ -219,13 +223,22 @@ pub fn execute_run(task: &Path, policy_path: &Path, out: &Path) -> Result<()> {
             artifact_ref(&evidence_graph_path, false)?,
             artifact_ref(&adjudication_path, true)?,
             artifact_ref(&patch_binding.final_patch_diff, true)?,
-            artifact_ref(&patch_binding.worktree_dir, false)?,
+            artifact_ref(&patch_binding.worktree_dir, true)?,
             artifact_ref(&review_summary_path, true)?,
             artifact_ref(&replay_record_path, false)?,
         ],
         human_witness: crate::schema::HumanWitness {
-            required: policy.attestation.human_witness_required || task.requires_human_witness,
-            status: String::from("pending-human-approval"),
+            required: policy.attestation.human_witness_required
+                || policy.review.human_approval_required
+                || task.requires_human_witness,
+            status: if policy.attestation.human_witness_required
+                || policy.review.human_approval_required
+                || task.requires_human_witness
+            {
+                String::from("pending-human-approval")
+            } else {
+                String::from("not-required")
+            },
         },
         verification_status: String::from("prototype-unverified-until-council-verify"),
     };
@@ -248,7 +261,7 @@ pub fn execute_run(task: &Path, policy_path: &Path, out: &Path) -> Result<()> {
             artifact_ref(&adjudication_path, true)?,
             artifact_ref(&patch_attestation_path, false)?,
             artifact_ref(&patch_binding.final_patch_diff, true)?,
-            artifact_ref(&patch_binding.worktree_dir, false)?,
+            artifact_ref(&patch_binding.worktree_dir, true)?,
             artifact_ref(&review_summary_path, true)?,
         ],
         verification_target: format!("council verify --run {}", out.display()),
@@ -267,7 +280,7 @@ pub fn execute_run(task: &Path, policy_path: &Path, out: &Path) -> Result<()> {
             artifact_ref(&adjudication_path, true)?,
             artifact_ref(&patch_attestation_path, false)?,
             artifact_ref(&patch_binding.final_patch_diff, true)?,
-            artifact_ref(&patch_binding.worktree_dir, false)?,
+            artifact_ref(&patch_binding.worktree_dir, true)?,
             artifact_ref(&review_summary_path, true)?,
             artifact_ref(&replay_record_path, false)?,
         ],
@@ -396,7 +409,11 @@ fn copy_tree(src: &Path, dst: &Path) -> Result<()> {
                 })?;
             }
             fs::copy(&src_path, &dst_path).with_context(|| {
-                format!("failed to copy {} to {}", src_path.display(), dst_path.display())
+                format!(
+                    "failed to copy {} to {}",
+                    src_path.display(),
+                    dst_path.display()
+                )
             })?;
         }
     }
@@ -476,7 +493,10 @@ fn compare_survivor_scores(left: &Proposal, right: &Proposal) -> Ordering {
     compare_desc(left.policy_compliance_score, right.policy_compliance_score)
         .then_with(|| compare_desc(left.change_scope_score, right.change_scope_score))
         .then_with(|| compare_desc(left.test_impact_score, right.test_impact_score))
-        .then_with(|| left.estimated_change_breadth.cmp(&right.estimated_change_breadth))
+        .then_with(|| {
+            left.estimated_change_breadth
+                .cmp(&right.estimated_change_breadth)
+        })
         .then_with(|| left.proposal_id.cmp(&right.proposal_id))
 }
 
@@ -491,7 +511,7 @@ fn artifact_ref(path: &Path, include_sha: bool) -> Result<ArtifactRef> {
             .map(|name| name.to_string_lossy().to_string())
             .unwrap_or_else(|| path.to_string_lossy().to_string()),
         sha256: if include_sha {
-            Some(sha256_for_file(path)?)
+            Some(sha256_for_path(path)?)
         } else {
             None
         },
@@ -509,9 +529,10 @@ fn render_review_summary(
     let rejected = ranked
         .iter()
         .filter_map(|entry| {
-            entry.blocking_reason.as_ref().map(|reason| {
-                format!("- `{}` rejected: {}", entry.proposal.proposal_id, reason)
-            })
+            entry
+                .blocking_reason
+                .as_ref()
+                .map(|reason| format!("- `{}` rejected: {}", entry.proposal.proposal_id, reason))
         })
         .collect::<Vec<_>>()
         .join("\n");
@@ -623,6 +644,9 @@ mod tests {
         let ranked = rank_proposals(&proposals, &critiques, 0.80);
         assert_eq!(ranked[0].proposal.proposal_id, "b");
         assert_eq!(ranked[0].blocking_reason, None);
-        assert_eq!(ranked[2].blocking_reason.as_deref(), Some("SCOPE_TOO_BROAD"));
+        assert_eq!(
+            ranked[2].blocking_reason.as_deref(),
+            Some("SCOPE_TOO_BROAD")
+        );
     }
 }

@@ -1,0 +1,4 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running `/tmp/consensuscouncil-target/debug/council verify --run releases/v0.1-evidence-bundle/tampered_missing_diff`
+FAIL BROKEN_REFERENCE,MISSING_FILE
+Error: BROKEN_REFERENCE,MISSING_FILE

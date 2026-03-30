@@ -1,0 +1,37 @@
+{
+  "run_id": "auth-validation-001-auth_security_v1",
+  "inputs": {
+    "task": "fixtures/auth_validation_fix/task.json",
+    "policy": "fixtures/auth_validation_fix/policy.json",
+    "proposals": "fixtures/auth_validation_fix/proposals.json",
+    "critiques": "fixtures/auth_validation_fix/critiques.json",
+    "checks": "fixtures/auth_validation_fix/checks.json"
+  },
+  "generated_artifacts": [
+    {
+      "path": "evidence_graph.json",
+      "sha256": null
+    },
+    {
+      "path": "adjudication.json",
+      "sha256": "6b13ab39fcd3e483f7875e5355f7c5abfd800ecd4b08ba18f91ff87a3bbfbd2b"
+    },
+    {
+      "path": "patch_attestation.json",
+      "sha256": null
+    },
+    {
+      "path": "final_patch.diff",
+      "sha256": "bed3030da9efc150a9d93b1f85a95084fa6884d768ef9d0413ea7644f1fa0775"
+    },
+    {
+      "path": "worktree",
+      "sha256": null
+    },
+    {
+      "path": "review_summary.md",
+      "sha256": "5d4a62b8dd2ebe0704ec367d7ede997738c9f8aa9f41f25b2f1281d3e8b4c305"
+    }
+  ],
+  "verification_target": "council verify --run demo/sample_run"
+}

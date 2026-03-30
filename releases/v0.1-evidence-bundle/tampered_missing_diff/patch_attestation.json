@@ -1,0 +1,77 @@
+{
+  "subject": {
+    "task_id": "auth-validation-001",
+    "title": "Harden OAuth callback redirect validation",
+    "repository": "worktree",
+    "intended_files": [
+      "src/auth/callback.ts",
+      "tests/auth/callback.test.ts"
+    ]
+  },
+  "builder": {
+    "tool": "council",
+    "version": "0.1.0"
+  },
+  "predicate_type": "https://consensuscouncilllm.local/attestation/patch-adjudication/v1",
+  "predicate": {
+    "winning_proposal_id": "proposal-b",
+    "final_writer": "agent:security",
+    "review_mode": "audit",
+    "change_class": "auth_security",
+    "risk_level": "high"
+  },
+  "policy": {
+    "policy_id": "auth_security_v1",
+    "change_class": "auth_security",
+    "risk_level": "high"
+  },
+  "checks": {
+    "required": [
+      {
+        "name": "tests",
+        "status": "passed"
+      },
+      {
+        "name": "lint",
+        "status": "passed"
+      }
+    ],
+    "optional": [
+      {
+        "name": "static_security_scan",
+        "status": "not_run"
+      }
+    ]
+  },
+  "evidence_refs": [
+    {
+      "path": "evidence_graph.json",
+      "sha256": null
+    },
+    {
+      "path": "adjudication.json",
+      "sha256": "6b13ab39fcd3e483f7875e5355f7c5abfd800ecd4b08ba18f91ff87a3bbfbd2b"
+    },
+    {
+      "path": "final_patch.diff",
+      "sha256": "bed3030da9efc150a9d93b1f85a95084fa6884d768ef9d0413ea7644f1fa0775"
+    },
+    {
+      "path": "worktree",
+      "sha256": null
+    },
+    {
+      "path": "review_summary.md",
+      "sha256": "5d4a62b8dd2ebe0704ec367d7ede997738c9f8aa9f41f25b2f1281d3e8b4c305"
+    },
+    {
+      "path": "replay_record.json",
+      "sha256": null
+    }
+  ],
+  "human_witness": {
+    "required": true,
+    "status": "pending-human-approval"
+  },
+  "verification_status": "prototype-unverified-until-council-verify"
+}

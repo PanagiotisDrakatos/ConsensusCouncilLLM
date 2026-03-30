@@ -264,10 +264,13 @@ where
 pub fn validate_value_against_schema(schema_name: &str, value: &Value) -> Result<()> {
     let schema_path = schema_path(schema_name);
     let schema: Value = read_json_file(&schema_path)?;
-    let validator =
-        validator_for(&schema).with_context(|| format!("failed to compile {}", schema_path.display()))?;
+    let validator = validator_for(&schema)
+        .with_context(|| format!("failed to compile {}", schema_path.display()))?;
 
-    let errors: Vec<String> = validator.iter_errors(value).map(|err| err.to_string()).collect();
+    let errors: Vec<String> = validator
+        .iter_errors(value)
+        .map(|err| err.to_string())
+        .collect();
     if errors.is_empty() {
         Ok(())
     } else {
@@ -302,6 +305,63 @@ pub fn sha256_for_file(path: &Path) -> Result<String> {
     let bytes = fs::read(path)
         .with_context(|| format!("failed to read file for digest {}", path.display()))?;
     Ok(sha256_for_bytes(&bytes))
+}
+
+pub fn sha256_for_path(path: &Path) -> Result<String> {
+    if path.is_file() {
+        return sha256_for_file(path);
+    }
+
+    if path.is_dir() {
+        return sha256_for_directory(path);
+    }
+
+    bail!("cannot compute digest for missing path {}", path.display())
+}
+
+fn sha256_for_directory(path: &Path) -> Result<String> {
+    let mut files = Vec::new();
+    collect_directory_files(path, path, &mut files)?;
+    files.sort();
+
+    let mut manifest = Vec::new();
+    for rel in files {
+        let rel_display = rel.to_string_lossy().replace('\\', "/");
+        let digest = sha256_for_file(&path.join(&rel))?;
+        manifest.extend_from_slice(rel_display.as_bytes());
+        manifest.push(0);
+        manifest.extend_from_slice(digest.as_bytes());
+        manifest.push(b'\n');
+    }
+
+    Ok(sha256_for_bytes(&manifest))
+}
+
+fn collect_directory_files(root: &Path, current: &Path, files: &mut Vec<PathBuf>) -> Result<()> {
+    let mut entries = fs::read_dir(current)
+        .with_context(|| format!("failed to read directory {}", current.display()))?
+        .collect::<Result<Vec<_>, _>>()
+        .with_context(|| format!("failed to enumerate directory {}", current.display()))?;
+    entries.sort_by_key(|entry| entry.path());
+
+    for entry in entries {
+        let path = entry.path();
+        if entry
+            .file_type()
+            .with_context(|| format!("failed to inspect {}", path.display()))?
+            .is_dir()
+        {
+            collect_directory_files(root, &path, files)?;
+        } else {
+            files.push(
+                path.strip_prefix(root)
+                    .with_context(|| format!("failed to relativize {}", path.display()))?
+                    .to_path_buf(),
+            );
+        }
+    }
+
+    Ok(())
 }
 
 pub fn repo_relative_or_absolute(path: &Path) -> String {

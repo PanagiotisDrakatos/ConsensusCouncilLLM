@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://consensuscouncilllm.local/schemas/evidence_graph.schema.json",
+  "title": "ConsensusCouncilLLM Evidence Graph",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "task",
+    "policy_ref",
+    "proposals",
+    "critiques",
+    "adjudication_ref",
+    "artifacts",
+    "final_writer"
+  ],
+  "properties": {
+    "run_id": { "type": "string" },
+    "policy_ref": { "type": "string" },
+    "adjudication_ref": { "type": "string" },
+    "final_writer": { "type": "string" },
+    "task": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "title",
+        "description",
+        "change_class",
+        "risk_level",
+        "target_files",
+        "requires_human_witness"
+      ],
+      "properties": {
+        "task_id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "change_class": { "type": "string" },
+        "risk_level": { "type": "string" },
+        "target_files": { "type": "array", "items": { "type": "string" } },
+        "requires_human_witness": { "type": "boolean" }
+      }
+    },
+    "proposals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "proposal_id",
+          "proposer_role",
+          "title",
+          "summary",
+          "final_writer_candidate",
+          "policy_compliance_score",
+          "change_scope_score",
+          "test_impact_score",
+          "estimated_change_breadth",
+          "predicted_files"
+        ],
+        "properties": {
+          "proposal_id": { "type": "string" },
+          "proposer_role": { "type": "string" },
+          "title": { "type": "string" },
+          "summary": { "type": "string" },
+          "final_writer_candidate": { "type": "string" },
+          "policy_compliance_score": { "type": "number" },
+          "change_scope_score": { "type": "number" },
+          "test_impact_score": { "type": "number" },
+          "estimated_change_breadth": { "type": "integer", "minimum": 0 },
+          "predicted_files": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "critiques": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "critique_id",
+          "proposal_id",
+          "reviewer_role",
+          "verdict",
+          "blocking",
+          "reason_code",
+          "summary"
+        ],
+        "properties": {
+          "critique_id": { "type": "string" },
+          "proposal_id": { "type": "string" },
+          "reviewer_role": { "type": "string" },
+          "verdict": { "type": "string" },
+          "blocking": { "type": "boolean" },
+          "reason_code": { "type": "string" },
+          "summary": { "type": "string" }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string" },
+          "sha256": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}

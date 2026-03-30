@@ -1,6 +1,7 @@
 use std::{fs, path::Path};
 
 use assert_cmd::Command;
+use serde_json::Value;
 use tempfile::tempdir;
 
 fn fixture_path(rel: &str) -> String {
@@ -108,6 +109,137 @@ fn verify_reports_missing_required_artifact() {
     assert!(
         combined.contains("MISSING_FILE"),
         "expected missing file reason code, got: {combined}"
+    );
+}
+
+#[test]
+fn verify_rejects_tampered_worktree_contents() {
+    let out_dir = tempdir().expect("tempdir");
+
+    Command::cargo_bin("council")
+        .expect("binary")
+        .args([
+            "run",
+            "--task",
+            &fixture_path("task.json"),
+            "--policy",
+            &fixture_path("policy.json"),
+            "--out",
+            out_dir.path().to_str().expect("utf8"),
+        ])
+        .assert()
+        .success();
+
+    fs::write(
+        out_dir.path().join("worktree/src/auth/callback.ts"),
+        "modified\n",
+    )
+    .expect("tamper worktree");
+
+    let output = Command::cargo_bin("council")
+        .expect("binary")
+        .args(["verify", "--run", out_dir.path().to_str().expect("utf8")])
+        .output()
+        .expect("verify output");
+
+    assert!(!output.status.success(), "verify should fail");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let combined = format!("{stdout}\n{stderr}");
+    assert!(
+        combined.contains("BROKEN_REFERENCE"),
+        "expected broken reference reason code, got: {combined}"
+    );
+}
+
+#[test]
+fn verify_rejects_failed_required_check() {
+    let out_dir = tempdir().expect("tempdir");
+
+    Command::cargo_bin("council")
+        .expect("binary")
+        .args([
+            "run",
+            "--task",
+            &fixture_path("task.json"),
+            "--policy",
+            &fixture_path("policy.json"),
+            "--out",
+            out_dir.path().to_str().expect("utf8"),
+        ])
+        .assert()
+        .success();
+
+    let attestation_path = out_dir.path().join("patch_attestation.json");
+    let mut attestation: Value =
+        serde_json::from_str(&fs::read_to_string(&attestation_path).expect("read attestation"))
+            .expect("parse attestation");
+    attestation["checks"]["required"][0]["status"] = Value::String(String::from("failed"));
+    fs::write(
+        &attestation_path,
+        serde_json::to_string_pretty(&attestation).expect("serialize attestation"),
+    )
+    .expect("write attestation");
+
+    let output = Command::cargo_bin("council")
+        .expect("binary")
+        .args(["verify", "--run", out_dir.path().to_str().expect("utf8")])
+        .output()
+        .expect("verify output");
+
+    assert!(!output.status.success(), "verify should fail");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let combined = format!("{stdout}\n{stderr}");
+    assert!(
+        combined.contains("POLICY_VIOLATION"),
+        "expected policy violation reason code, got: {combined}"
+    );
+}
+
+#[test]
+fn verify_rejects_inconsistent_human_witness_state() {
+    let out_dir = tempdir().expect("tempdir");
+
+    Command::cargo_bin("council")
+        .expect("binary")
+        .args([
+            "run",
+            "--task",
+            &fixture_path("task.json"),
+            "--policy",
+            &fixture_path("policy.json"),
+            "--out",
+            out_dir.path().to_str().expect("utf8"),
+        ])
+        .assert()
+        .success();
+
+    let attestation_path = out_dir.path().join("patch_attestation.json");
+    let mut attestation: Value =
+        serde_json::from_str(&fs::read_to_string(&attestation_path).expect("read attestation"))
+            .expect("parse attestation");
+    attestation["human_witness"]["required"] = Value::Bool(false);
+    attestation["human_witness"]["status"] = Value::String(String::from("not-required"));
+    fs::write(
+        &attestation_path,
+        serde_json::to_string_pretty(&attestation).expect("serialize attestation"),
+    )
+    .expect("write attestation");
+
+    let output = Command::cargo_bin("council")
+        .expect("binary")
+        .args(["verify", "--run", out_dir.path().to_str().expect("utf8")])
+        .output()
+        .expect("verify output");
+
+    assert!(!output.status.success(), "verify should fail");
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let combined = format!("{stdout}\n{stderr}");
+    assert!(
+        combined.contains("POLICY_VIOLATION"),
+        "expected policy violation reason code, got: {combined}"
     );
 }
 

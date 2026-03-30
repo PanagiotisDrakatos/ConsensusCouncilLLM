@@ -1,0 +1,39 @@
+diff --git a/package.json b/package.json
+index 1111111..2222222 100644
+--- a/package.json
++++ b/package.json
+@@ -2,6 +2,6 @@
+   "name": "governed-api-client",
+   "private": true,
+   "dependencies": {
+-    "axios": "1.7.3"
++    "axios": "1.7.4"
+   }
+ }
+diff --git a/package-lock.json b/package-lock.json
+index 3333333..4444444 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -3,7 +3,7 @@
+   "lockfileVersion": 3,
+   "packages": {
+     "": {
+-      "dependencies": {
+-        "axios": "1.7.3"
++      "dependencies": {
++        "axios": "1.7.4"
+       }
+     }
+   }
+diff --git a/tests/api-client.test.ts b/tests/api-client.test.ts
+index 5555555..6666666 100644
+--- a/tests/api-client.test.ts
++++ b/tests/api-client.test.ts
+@@ -1,5 +1,5 @@
+ describe("api client dependency pin", () => {
+-  it("keeps the approved axios patch release in package metadata", () => {
+-    expect("1.7.3").toBe("1.7.3");
++  it("keeps the approved axios patch release pinned after governance review", () => {
++    expect("1.7.4").toBe("1.7.4");
+   });
+ });

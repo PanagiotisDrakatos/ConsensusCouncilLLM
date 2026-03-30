@@ -7,7 +7,7 @@ use std::{
 use anyhow::{bail, Context, Result};
 
 use crate::schema::{
-    read_json_file, resolve_repo_path, sha256_for_file, validate_json_file_against_schema,
+    read_json_file, resolve_repo_path, sha256_for_path, validate_json_file_against_schema,
     AdjudicationResult, EvidenceGraph, PatchAttestation, Policy, ReplayRecord, VerifyReport,
 };
 
@@ -51,13 +51,17 @@ pub fn execute_verify(run_dir: &Path) -> Result<VerifyReport> {
         reason_codes.insert(String::from("SCHEMA_INVALID"));
     }
     if patch_attestation_path.exists()
-        && validate_json_file_against_schema("patch_attestation.schema.json", &patch_attestation_path)
-            .is_err()
+        && validate_json_file_against_schema(
+            "patch_attestation.schema.json",
+            &patch_attestation_path,
+        )
+        .is_err()
     {
         reason_codes.insert(String::from("SCHEMA_INVALID"));
     }
     if replay_record_path.exists()
-        && validate_json_file_against_schema("replay_record.schema.json", &replay_record_path).is_err()
+        && validate_json_file_against_schema("replay_record.schema.json", &replay_record_path)
+            .is_err()
     {
         reason_codes.insert(String::from("SCHEMA_INVALID"));
     }
@@ -73,7 +77,8 @@ pub fn execute_verify(run_dir: &Path) -> Result<VerifyReport> {
         patch_attestation.as_ref(),
         replay_record.as_ref(),
     ) {
-        if validate_cross_references(evidence_graph, adjudication, attestation, replay_record).is_err()
+        if validate_cross_references(evidence_graph, adjudication, attestation, replay_record)
+            .is_err()
         {
             reason_codes.insert(String::from("BROKEN_REFERENCE"));
         }
@@ -93,10 +98,22 @@ pub fn execute_verify(run_dir: &Path) -> Result<VerifyReport> {
         if validate_attestation_policy(&replay_record.inputs.policy, attestation).is_err() {
             reason_codes.insert(String::from("BROKEN_REFERENCE"));
         }
+
+        if let Ok(policy) = load_policy(&replay_record.inputs.policy) {
+            if validate_policy_constraints(run_dir, &policy, evidence_graph, attestation).is_err() {
+                reason_codes.insert(String::from("POLICY_VIOLATION"));
+            }
+        } else {
+            reason_codes.insert(String::from("BROKEN_REFERENCE"));
+        }
     }
 
     let reason_codes: Vec<String> = reason_codes.into_iter().collect();
-    let status = if reason_codes.is_empty() { "PASS" } else { "FAIL" };
+    let status = if reason_codes.is_empty() {
+        "PASS"
+    } else {
+        "FAIL"
+    };
 
     let report = VerifyReport {
         status: status.to_string(),
@@ -105,7 +122,8 @@ pub fn execute_verify(run_dir: &Path) -> Result<VerifyReport> {
     };
 
     let report_path = run_dir.join("verify_report.json");
-    let body = serde_json::to_string_pretty(&report).context("failed to serialize verify report")?;
+    let body =
+        serde_json::to_string_pretty(&report).context("failed to serialize verify report")?;
     fs::write(&report_path, body)
         .with_context(|| format!("failed to write {}", report_path.display()))?;
 
@@ -216,7 +234,7 @@ fn validate_artifact_refs(
         }
 
         if let Some(expected_sha) = artifact.sha256.as_deref() {
-            let actual = sha256_for_file(&target)?;
+            let actual = sha256_for_path(&target)?;
             if actual != expected_sha {
                 bail!("digest mismatch for {}", artifact.path);
             }
@@ -226,9 +244,13 @@ fn validate_artifact_refs(
     Ok(())
 }
 
-fn validate_attestation_policy(policy_ref: &str, attestation: &PatchAttestation) -> Result<()> {
+fn load_policy(policy_ref: &str) -> Result<Policy> {
     let path = resolve_repo_path(policy_ref);
-    let policy: Policy = read_json_file(&path)?;
+    read_json_file(&path)
+}
+
+fn validate_attestation_policy(policy_ref: &str, attestation: &PatchAttestation) -> Result<()> {
+    let policy = load_policy(policy_ref)?;
 
     if policy.policy_id != attestation.policy.policy_id
         || policy.change_class != attestation.policy.change_class
@@ -238,6 +260,106 @@ fn validate_attestation_policy(policy_ref: &str, attestation: &PatchAttestation)
     }
 
     Ok(())
+}
+
+fn validate_policy_constraints(
+    run_dir: &Path,
+    policy: &Policy,
+    evidence_graph: &EvidenceGraph,
+    attestation: &PatchAttestation,
+) -> Result<()> {
+    validate_required_artifacts(run_dir, policy)?;
+    validate_review_requirements(policy, evidence_graph)?;
+    validate_required_checks(policy, attestation)?;
+    validate_human_witness(policy, &evidence_graph.task, attestation)?;
+    Ok(())
+}
+
+fn validate_required_artifacts(run_dir: &Path, policy: &Policy) -> Result<()> {
+    for artifact in &policy.required_artifacts {
+        let path = resolve_run_path(run_dir, artifact);
+        if !path.exists() {
+            bail!("required artifact {} is missing", artifact);
+        }
+    }
+
+    Ok(())
+}
+
+fn validate_review_requirements(policy: &Policy, evidence_graph: &EvidenceGraph) -> Result<()> {
+    let reviewer_roles: BTreeSet<&str> = evidence_graph
+        .critiques
+        .iter()
+        .map(|critique| canonical_role_name(&critique.reviewer_role))
+        .collect();
+
+    if reviewer_roles.len() < policy.review.minimum_reviewers as usize {
+        bail!("reviewer count below policy minimum");
+    }
+
+    for role in &policy.review.reviewer_roles {
+        if !reviewer_roles.contains(canonical_role_name(role)) {
+            bail!("missing required reviewer role {}", role);
+        }
+    }
+
+    Ok(())
+}
+
+fn validate_required_checks(policy: &Policy, attestation: &PatchAttestation) -> Result<()> {
+    for required_check in &policy.checks.required {
+        let check = attestation
+            .checks
+            .required
+            .iter()
+            .find(|check| check.name == *required_check)
+            .with_context(|| format!("missing required check {}", required_check))?;
+
+        if !is_passing_check_status(&check.status) {
+            bail!("required check {} is not passed", required_check);
+        }
+    }
+
+    Ok(())
+}
+
+fn canonical_role_name(role: &str) -> &str {
+    role.strip_suffix("-review").unwrap_or(role)
+}
+
+fn is_passing_check_status(status: &str) -> bool {
+    matches!(status, "pass" | "passed" | "success")
+}
+
+fn validate_human_witness(
+    policy: &Policy,
+    task: &crate::schema::Task,
+    attestation: &PatchAttestation,
+) -> Result<()> {
+    let human_witness_required = policy.attestation.human_witness_required
+        || policy.review.human_approval_required
+        || task.requires_human_witness;
+
+    if human_witness_required {
+        if !attestation.human_witness.required {
+            bail!("human witness is required by policy");
+        }
+
+        match attestation.human_witness.status.as_str() {
+            "pending-human-approval" | "approved" => Ok(()),
+            _ => bail!("human witness status is invalid for required witness"),
+        }
+    } else {
+        if attestation.human_witness.required {
+            bail!("human witness is marked required when policy does not require it");
+        }
+
+        if attestation.human_witness.status != "not-required" {
+            bail!("human witness status must be not-required");
+        }
+
+        Ok(())
+    }
 }
 
 fn resolve_run_path(run_dir: &Path, reference: &str) -> PathBuf {

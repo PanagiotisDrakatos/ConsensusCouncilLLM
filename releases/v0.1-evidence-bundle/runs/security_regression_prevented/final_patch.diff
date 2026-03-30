@@ -1,0 +1,36 @@
+diff --git a/src/auth/callback.ts b/src/auth/callback.ts
+index 7777777..8888888 100644
+--- a/src/auth/callback.ts
++++ b/src/auth/callback.ts
+@@ -1,5 +1,9 @@
+ const allowedRedirects = new Set(["/dashboard", "/settings"]);
+ const ALLOWED_REDIRECT_BASE = "https://app.example.com";
++
++function isAllowedRedirectPath(target: string): boolean {
++  return allowedRedirects.has(target);
++}
+ 
+ export function normalizeRedirectTarget(target: string): string | null {
+   const candidate = target.trim();
+@@ -21,6 +25,6 @@ export function resolveRedirectTarget(input: string): string | null {
+     return null;
+   }
+ 
+-  return allowedRedirects.has(normalized) ? normalized : null;
++  return isAllowedRedirectPath(normalized) ? normalized : null;
+ }
+diff --git a/tests/auth/callback.test.ts b/tests/auth/callback.test.ts
+index 9999999..aaaaaaa 100644
+--- a/tests/auth/callback.test.ts
++++ b/tests/auth/callback.test.ts
+@@ -13,6 +13,10 @@ describe("resolveRedirectTarget", () => {
+     expect(resolveRedirectTarget("%%%")).toBeNull();
+   });
+ 
++  it("rejects empty callback targets before allowlist checks", () => {
++    expect(resolveRedirectTarget("   ")).toBeNull();
++  });
++
+   it("rejects foreign-origin callback targets", () => {
+     expect(resolveRedirectTarget("https://evil.example.com/dashboard")).toBeNull();
+   });

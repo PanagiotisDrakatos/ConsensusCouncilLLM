@@ -1,74 +1,64 @@
-# Comparison with Existing Approaches
+# Comparison
 
-ConsensusCouncilLLM targets a specific gap: **governance of AI-generated code changes**. This is distinct from code generation, artifact signing, or multi-agent orchestration.
+Updated: 2026-03-31
 
-## Comparison Matrix
+ConsensusCouncilLLM is not trying to replace AI coding tools or supply-chain provenance tools.
 
-| Capability | ConsensusCouncilLLM | SLSA / in-toto | Sigstore | Copilot / Cursor | Multi-agent panels |
-|------------|:---:|:---:|:---:|:---:|:---:|
-| Policy by change class | Yes | No | No | No | No |
-| Structured evidence for proposals | Yes | No | No | No | Partial |
-| Deterministic adjudication | Yes | No | No | No | Partial (voting) |
-| One-final-writer discipline | Yes | No | No | N/A | No |
-| Attestation export | Yes | Yes | Yes | No | No |
-| Replay and verification | Yes | Partial | Partial | No | No |
-| Governs AI-generated change | Yes | No | No | No | No |
-| Local-first, file-based | Yes | Partial | No (online) | No (cloud) | Varies |
-| **Governance traceability** | **Full** | Build-only | Signature-only | None | None |
-| **Human oversight integration** | **Yes** | No | No | No | No |
-| **Regulatory alignment (EU AI Act)** | **Yes** | Partial | No | No | No |
+## Adjacent categories
 
-## Governance Maturity Comparison
+### AI coding tools
 
-| Dimension | ConsensusCouncilLLM | Nearest alternative |
-|-----------|:---:|:---:|
-| Change-level governance | 9/10 — policy + evidence + adjudication + attestation | 2/10 — SLSA (build provenance only) |
-| Auditability | 9/10 — full replay with verifier | 5/10 — Sigstore (signature logs) |
-| Human-in-the-loop | 8/10 — witness fields + final-writer discipline | 1/10 — none provide structured human review |
-| Tamper detection | 8/10 — digest-linked artifacts + tamper-proof examples | 7/10 — in-toto (layout verification) |
-| Regulatory readiness | 7/10 — maps to AI Act Art. 50-51 | 3/10 — SLSA (build compliance only) |
+Examples: Copilot, Cursor, Codeium
 
-## What Each Tool Does Well
+What they do well:
+- generate or edit code
+- speed up patch creation
 
-### SLSA / in-toto
-Build provenance and supply-chain integrity. Excellent at proving *how a binary was produced*. Does not govern what review happened before a code change was accepted.
+What they do not provide:
+- policy by change class
+- structured governed review evidence
+- one-final-writer discipline
+- replayable governed artifact bundles
 
-### Sigstore (Cosign, Rekor, Fulcio)
-Keyless code signing and transparency logs. Proves *who signed what*. Does not evaluate whether a change was reviewed, by what policy, or with what evidence.
+### Supply-chain provenance tools
 
-### Copilot / Cursor / AI Coding Assistants
-Code generation and suggestion. Produce useful diffs. Do not provide structured governance over whether those diffs should be merged, under what policy, or with what attestation.
+Examples: SLSA, in-toto, Sigstore-adjacent provenance workflows
 
-### Multi-agent Debate Panels (Claude-Octopus, Ruflo, OpenCode Teams, etc.)
-Agent orchestration and answer selection. Choose which model produces the best answer. Do not provide policy-governed admission, evidence trails, or attestation for merge decisions.
+What they do well:
+- gate build and release artifacts
+- record provenance for produced artifacts
 
-## Where ConsensusCouncilLLM Fits
+What they do not provide here:
+- adjudication over competing code-change proposals
+- governed merge-decision evidence for the patch itself
 
-```
-Code Generation          Governance Layer         Artifact Signing
-(Copilot, Cursor)   -->  (ConsensusCouncilLLM) --> (SLSA, Sigstore)
-                              |
-                         Policy + Evidence
-                         + Adjudication
-                         + Attestation
-                         + Replay/Verify
-```
+### Multi-agent orchestration frameworks
 
-ConsensusCouncilLLM is not a replacement for any of these tools. It fills the gap between code generation and artifact signing — the governance layer that decides whether a specific AI-generated change is safe to merge.
+Examples: LangGraph, CrewAI, AutoGen, debate/selection panels
 
-## Key differentiator: Governance traceability
+What they do well:
+- coordinate agents
+- compare outputs
+- route tasks
 
-Most existing tools provide **point-in-time verification** (was this signed? was this built reproducibly?). ConsensusCouncilLLM provides **decision-process traceability** (what was proposed, what was considered, how was the decision made, and can the entire process be replayed?).
+What they do not provide here:
+- policy-bound merge-trust artifacts
+- stable replay records for governed code-change decisions
 
-This distinction matters because:
-- Signatures prove identity, not judgment quality
-- Build provenance proves process, not review adequacy
-- Governance traceability proves that a structured, policy-driven review occurred before merge
+## ConsensusCouncilLLM's actual lane
 
-For organisations adopting AI coding tools, the question is not "was this code signed?" but "was this AI-generated change reviewed under an appropriate governance process?" ConsensusCouncilLLM answers that question.
+ConsensusCouncilLLM sits after generation and before merge.
 
-## Research Support
+Its current prototype focuses on:
+- policy admission
+- structured review evidence
+- deterministic adjudication
+- attestation export
+- replayable verification artifacts
 
-The design choice to use structured scoring rather than majority vote is supported by:
-- AgentAuditor (arXiv:2602.09341): evidence-based adjudication outperforms frequency-based voting
-- ACL 2025 Findings (arXiv:2502.19130): independent-proposal voting is more robust when diversity matters
+## Related repo notes
+
+For the longer reviewer-facing comparison, see:
+
+- `POSITIONING_MATRIX_V1.md`
+- `COMPARATIVE_EVAL_NOTE.md`
