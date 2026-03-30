@@ -75,7 +75,7 @@ Implemented now:
 - replayable sample run in `demo/sample_run/`
 - fixed local worktree plus `final_patch.diff` for the winning proposal
 - install and quickstart docs
-- submission-oriented NLnet draft and budget package
+- public documentation for reviewer inspection and repository navigation
 - local evidence bundle and a tampered-bundle fail example for reviewer inspection
 
 Still future work:
@@ -151,7 +151,7 @@ See:
 5. `COMPARISON.md`
 6. `ROADMAP.md`
 
-Supporting strategy notes remain under `round2/`. Historical material remains under `archive/`.
+This public repository intentionally keeps the reviewer path short and focused on the runnable prototype, demo outputs, and release evidence bundle.
 
 ## Next Funded Work
 
